@@ -1,0 +1,209 @@
+.landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hero */
+.hero {
+  padding: 4rem 2rem 3rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  background: radial-gradient(ellipse at top, #1a1a2e 0%, var(--bg) 70%);
+}
+
+.site-title {
+  font-size: clamp(2rem, 6vw, 4rem);
+  letter-spacing: 0.05em;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.bracket {
+  color: var(--muted);
+}
+
+.accent {
+  color: var(--accent);
+}
+
+.tagline {
+  margin-top: 0.75rem;
+  color: var(--muted);
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+}
+
+/* Disclaimer */
+.disclaimer-banner {
+  background: #1a1200;
+  border-top: 2px solid #7a5c00;
+  border-bottom: 2px solid #7a5c00;
+  padding: 0.85rem 2rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #c9a84c;
+  line-height: 1.5;
+}
+
+.disclaimer-banner strong {
+  color: #ffc84a;
+}
+
+/* Game Grid */
+.game-grid-section {
+  flex: 1;
+  padding: 3rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.section-heading {
+  font-size: 0.9rem;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+}
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.game-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+}
+
+.game-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+}
+
+.game-card.coming-soon {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.game-card.coming-soon:hover {
+  border-color: var(--border);
+  transform: none;
+}
+
+.game-emoji {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.game-title {
+  font-size: 1.15rem;
+  color: var(--text);
+}
+
+.game-desc {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+  flex: 1;
+}
+
+.game-inspired {
+  font-size: 0.72rem;
+  color: #444;
+  font-style: italic;
+}
+
+.play-btn {
+  margin-top: 1rem;
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  border-radius: 4px;
+  text-align: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.game-card:hover .play-btn:not(.muted) {
+  background: var(--accent);
+  color: #000;
+}
+
+.play-btn.muted {
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+/* Classics Section */
+.classics-section {
+  border-top: 1px solid var(--border);
+  background: linear-gradient(to bottom, #0d0a00, var(--bg));
+}
+
+.classics-heading {
+  color: var(--accent2);
+}
+
+.classics-subheading {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: -1rem;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+  letter-spacing: 0.05em;
+}
+
+.classic-card {
+  border-color: #2a1e00;
+}
+
+.classic-card:hover {
+  border-color: var(--accent2);
+}
+
+.classic-origin {
+  font-size: 0.72rem;
+  color: #5a4a2a;
+  font-style: italic;
+}
+
+.classic-btn {
+  border-color: var(--accent2);
+  color: var(--accent2);
+}
+
+.classic-card:hover .classic-btn {
+  background: var(--accent2);
+  color: #000;
+}
+
+/* Footer */
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 2rem;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.site-footer a {
+  color: var(--accent);
+}
+
+.footer-small {
+  font-size: 0.7rem;
+  color: #444;
+}
