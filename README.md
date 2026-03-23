@@ -1,16 +1,45 @@
-# React + Vite
+# [games**by**jeff]
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A personal arcade — built for fun, not profit.
 
-Currently, two official plugins are available:
+Live at [gamesbyjeff.com](https://gamesbyjeff.com)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Games
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Pipe Dodger
+Flap a little bird through an endless gauntlet of pipes. Inspired by classic side-scrollers. Tap or press Space to flap. Hit the floor and it's over — the ceiling bounces you back.
 
-## Expanding the ESLint configuration
+### Pumpkin Run
+A Chrome dino-style runner starring Pumpkin, an orange tabby cat. Jump yarn balls, duck under flying dogs. Speed and obstacle complexity ramp up as your score climbs.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Key | Action |
+|-----|--------|
+| Space / ↑ | Jump |
+| ↓ | Duck |
+| Tap | Jump (mobile) |
+
+---
+
+## Stack
+
+- [React 19](https://react.dev) + [Vite 8](https://vite.dev)
+- [React Router v7](https://reactrouter.com)
+- HTML5 Canvas for all game rendering
+- No game engine — everything is hand-rolled
+
+---
+
+## Running locally
+
+```bash
+npm install
+npm run dev
+```
+
+---
+
+## Notes
+
+Non-commercial hobby project. All games are original implementations inspired by classic arcade mechanics. No original assets, code, or trademarks are used. No ads. No monetization. Ever.
