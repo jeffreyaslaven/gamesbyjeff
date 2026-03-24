@@ -153,6 +153,16 @@ export default function Blackjack() {
   const [showHowToPlay, setShowHowToPlay] = useState(() => localStorage.getItem('bj-visited') !== 'true')
   const [quizStreak, setQuizStreak] = useState(0)
 
+  // Split state
+  const [splitHand, setSplitHand] = useState([])
+  const [isSplit, setIsSplit] = useState(false)
+  const [activeHand, setActiveHand] = useState(0)  // 0 = main hand, 1 = split hand
+  const [splitBet, setSplitBet] = useState(0)
+  const splitHandRef = useRef([])
+  const isSplitRef = useRef(false)
+  const activeHandRef = useRef(0)
+  const splitBetRef = useRef(0)
+
   function changeShoe(n) {
     setNumDecks(n)
     localStorage.setItem('bj-decks', n)
@@ -170,6 +180,10 @@ export default function Blackjack() {
     setQuizInput('')
     setQuizCorrect(null)
     setWinAmount(null)
+    setSplitHand([]); splitHandRef.current = []
+    setIsSplit(false); isSplitRef.current = false
+    setActiveHand(0); activeHandRef.current = 0
+    setSplitBet(0); splitBetRef.current = 0
   }
 
   function toggleCounting() {
@@ -271,19 +285,40 @@ export default function Blackjack() {
 
   async function hit() {
     const card = deckRef.current.pop()
-    const p = [...player, card]
-    setPlayer(p)
-    setFreshSide('player'); setFreshIdx(p.length - 1)
     addToCount([card])
-    await sleep(200)
-    setFreshSide(null); setFreshIdx(null)
-    const total = handTotal(p)
-    if (total > 21) await resolve(p, dealer, 'bust', 'Bust! 💥', betRef.current)
-    else if (total === 21) await runDealer(p, dealer)
+
+    if (activeHandRef.current === 0) {
+      const p = [...player, card]
+      setPlayer(p)
+      setFreshSide('player'); setFreshIdx(p.length - 1)
+      await sleep(200); setFreshSide(null); setFreshIdx(null)
+      const total = handTotal(p)
+      if (total > 21) {
+        if (isSplitRef.current) await switchToSplit(p)
+        else await resolve(p, dealer, 'bust', 'Bust! 💥', betRef.current)
+      } else if (total === 21 && !isSplitRef.current) {
+        await runDealer(p, dealer)
+      }
+    } else {
+      const s = [...splitHandRef.current, card]
+      setSplitHand(s); splitHandRef.current = s
+      setFreshSide('split'); setFreshIdx(s.length - 1)
+      await sleep(200); setFreshSide(null); setFreshIdx(null)
+      const total = handTotal(s)
+      if (total > 21 || total === 21) {
+        await runDealerSplit(player, s, dealer)
+      }
+    }
   }
 
   async function stand() {
-    await runDealer(player, dealer)
+    if (isSplitRef.current && activeHandRef.current === 0) {
+      await switchToSplit(player)
+    } else if (isSplitRef.current && activeHandRef.current === 1) {
+      await runDealerSplit(player, splitHandRef.current, dealer)
+    } else {
+      await runDealer(player, dealer)
+    }
   }
 
   async function doubleDown() {
@@ -303,6 +338,105 @@ export default function Blackjack() {
 
     if (handTotal(p) > 21) await resolve(p, dealer, 'bust', 'Bust! 💥', newBet)
     else await runDealer(p, dealer, newBet)
+  }
+
+  async function splitHands() {
+    if (balance < bet) return
+    const sb = bet
+    setBalance(b => { const n = b - sb; localStorage.setItem('bj-balance', n); return n })
+    setSplitBet(sb); splitBetRef.current = sb
+
+    const c1 = deckRef.current.pop()  // new card for main hand
+    const c2 = deckRef.current.pop()  // new card for split hand
+
+    const mainCards = [player[0], c1]
+    const sCards = [player[1], c2]
+
+    setPlayer([player[0]])
+    setSplitHand([player[1]]); splitHandRef.current = [player[1]]
+    await sleep(200)
+    setPlayer(mainCards); setFreshSide('player'); setFreshIdx(1); addToCount([c1])
+    await sleep(300)
+    setSplitHand(sCards); splitHandRef.current = sCards; setFreshSide('split'); setFreshIdx(1); addToCount([c2])
+    await sleep(300)
+    setFreshSide(null); setFreshIdx(null)
+
+    setIsSplit(true); isSplitRef.current = true
+    setActiveHand(0); activeHandRef.current = 0
+    setPhase('playing')
+  }
+
+  async function switchToSplit(currentMainHand) {
+    setActiveHand(1); activeHandRef.current = 1
+  }
+
+  async function runDealerSplit(mainCards, splitCards, dHand, currentBet = betRef.current, currentSplitBet = splitBetRef.current) {
+    setPhase('dealer')
+    setHoleDown(false)
+    addToCount([dHand[1]])
+    await sleep(500)
+
+    let dl = [...dHand]
+    while (dealerShouldHit(dl)) {
+      const card = deckRef.current.pop()
+      dl = [...dl, card]
+      setDealer([...dl])
+      setFreshSide('dealer'); setFreshIdx(dl.length - 1)
+      addToCount([card])
+      await sleep(500)
+      setFreshSide(null); setFreshIdx(null)
+    }
+
+    const dTotal = handTotal(dl)
+    const mainTotal = handTotal(mainCards)
+    const splitTotal = handTotal(splitCards)
+
+    // Resolve main hand
+    let mainNet = 0
+    if (mainTotal > 21) {
+      // already busted, no payout (bet already deducted)
+    } else if (dTotal > 21 || mainTotal > dTotal) {
+      mainNet = currentBet * 2
+    } else if (mainTotal === dTotal) {
+      mainNet = currentBet  // push
+    }
+
+    // Resolve split hand (blackjack on split pays 1:1, not 3:2)
+    let splitNet = 0
+    if (splitTotal > 21) {
+      // busted, no payout
+    } else if (dTotal > 21 || splitTotal > dTotal) {
+      splitNet = currentSplitBet * 2
+    } else if (splitTotal === dTotal) {
+      splitNet = currentSplitBet  // push
+    }
+
+    setDealer(dl)
+    setPhase('result')
+
+    // Build result message
+    const mainResult = mainTotal > 21 ? 'bust' : dTotal > 21 || mainTotal > dTotal ? 'win' : mainTotal === dTotal ? 'push' : 'lose'
+    const splitResult = splitTotal > 21 ? 'bust' : dTotal > 21 || splitTotal > dTotal ? 'win' : splitTotal === dTotal ? 'push' : 'lose'
+
+    const totalNet = (mainNet - currentBet) + (splitNet - currentSplitBet)
+    setOutcome(totalNet > 0 ? 'win' : totalNet < 0 ? 'lose' : 'push')
+
+    const mainMsg = mainResult === 'win' ? 'Hand 1: Win ✓' : mainResult === 'push' ? 'Hand 1: Push' : 'Hand 1: Lose ✗'
+    const splitMsg = splitResult === 'win' ? 'Hand 2: Win ✓' : splitResult === 'push' ? 'Hand 2: Push' : 'Hand 2: Lose ✗'
+    setMessage(`${mainMsg} · ${splitMsg}`)
+
+    const netDisplay = totalNet > 0 ? `+$${totalNet} profit` : totalNet < 0 ? `-$${Math.abs(totalNet)}` : 'No change'
+    setWinAmount({ net: totalNet, label: netDisplay })
+
+    setBalance(b => {
+      const n = b + mainNet + splitNet
+      localStorage.setItem('bj-balance', n)
+      return n
+    })
+
+    if (counting && quizMode) {
+      setQuizInput(''); setQuizCorrect(null); setQuizPhase('asking')
+    }
   }
 
   async function runDealer(pHand, dHand, currentBet = betRef.current) {
@@ -375,6 +509,10 @@ export default function Blackjack() {
     setMessage('')
     setQuizPhase(null)
     setWinAmount(null)
+    setSplitHand([]); splitHandRef.current = []
+    setIsSplit(false); isSplitRef.current = false
+    setActiveHand(0); activeHandRef.current = 0
+    setSplitBet(0); splitBetRef.current = 0
   }
 
   function resetGame() {
@@ -392,12 +530,18 @@ export default function Blackjack() {
     setQuizPhase(null)
     setQuizInput('')
     setQuizCorrect(null)
+    setSplitHand([]); splitHandRef.current = []
+    setIsSplit(false); isSplitRef.current = false
+    setActiveHand(0); activeHandRef.current = 0
+    setSplitBet(0); splitBetRef.current = 0
   }
 
   const pTotal = player.length ? handTotal(player) : null
   const dTotal = dealer.length ? handTotal(dealer) : null
   const showDealerTotal = phase === 'result' || phase === 'dealer'
-  const canDouble = phase === 'playing' && player.length === 2 && balance >= bet
+  const canDouble = phase === 'playing' && !isSplit && player.length === 2 && balance >= bet
+  const canSplit = phase === 'playing' && !isSplit && player.length === 2 &&
+    cardNumeric(player[0]) === cardNumeric(player[1]) && balance >= bet
   const busy = phase === 'dealing' || phase === 'dealer'
 
   // True count = running count / decks remaining
@@ -606,19 +750,40 @@ export default function Blackjack() {
 
         {/* ── Player area ── */}
         <div className="bj-player-area">
-          <div className="bj-area-label">
-            You {pTotal ? `(${pTotal})` : ''}
-          </div>
-          <div className="bj-hand">
-            {player.map((card, i) => (
-              <Card
-                key={i}
-                card={card}
-                fresh={freshSide === 'player' && freshIdx === i}
-                showCount={counting && showHiLo}
-              />
-            ))}
-          </div>
+          {isSplit ? (
+            <div className="bj-split-hands">
+              <div className={`bj-split-hand ${activeHand === 0 ? 'active' : 'inactive'}`}>
+                <div className="bj-area-label">Hand 1 {handTotal(player) > 0 ? `(${handTotal(player)})` : ''}</div>
+                <div className="bj-hand">
+                  {player.map((card, i) => (
+                    <Card key={i} card={card} fresh={freshSide === 'player' && freshIdx === i} showCount={counting && showHiLo} />
+                  ))}
+                </div>
+              </div>
+              <div className={`bj-split-hand ${activeHand === 1 ? 'active' : 'inactive'}`}>
+                <div className="bj-area-label">Hand 2 {splitHand.length && handTotal(splitHand) > 0 ? `(${handTotal(splitHand)})` : ''}</div>
+                <div className="bj-hand">
+                  {splitHand.map((card, i) => (
+                    <Card key={i} card={card} fresh={freshSide === 'split' && freshIdx === i} showCount={counting && showHiLo} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="bj-area-label">You {pTotal ? `(${pTotal})` : ''}</div>
+          )}
+          {!isSplit && (
+            <div className="bj-hand">
+              {player.map((card, i) => (
+                <Card
+                  key={i}
+                  card={card}
+                  fresh={freshSide === 'player' && freshIdx === i}
+                  showCount={counting && showHiLo}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* ── Controls ── */}
@@ -682,6 +847,11 @@ export default function Blackjack() {
                 {canDouble && (
                   <button className="bj-btn double" onClick={doubleDown} disabled={busy}>
                     Double Down
+                  </button>
+                )}
+                {canSplit && (
+                  <button className="bj-btn split" onClick={splitHands} disabled={busy}>
+                    Split
                   </button>
                 )}
               </div>

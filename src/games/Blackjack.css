@@ -654,3 +654,31 @@
   color: #fc8181;
   font-weight: 600;
 }
+
+/* ── Split ────────────────────────────────────────────────────────────────── */
+
+.bj-btn.split { background: #4299e1; color: #fff; }
+
+.bj-split-hands {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.bj-split-hand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: opacity 0.2s;
+}
+
+.bj-split-hand.inactive {
+  opacity: 0.45;
+}
+
+.bj-split-hand.active .bj-area-label {
+  color: #f6d860;
+}
