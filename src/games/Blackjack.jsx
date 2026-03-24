@@ -83,6 +83,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms))
 
 const STARTING_CHIPS = 500
 const CHIP_CONFIG = [
+  { value: 1,   label: '$1',   color: '#718096' },
   { value: 5,   label: '$5',   color: '#e74c3c' },
   { value: 10,  label: '$10',  color: '#3498db' },
   { value: 25,  label: '$25',  color: '#2ecc71' },
@@ -137,7 +138,7 @@ export default function Blackjack() {
   const [message, setMessage] = useState('')
 
   // Card counting state
-  const [counting, setCounting] = useState(() => localStorage.getItem('bj-counting') === 'true')
+  const [counting, setCounting] = useState(false)
   const [showHiLo, setShowHiLo] = useState(() => localStorage.getItem('bj-showHiLo') !== 'false')
   const [quizMode, setQuizMode] = useState(() => localStorage.getItem('bj-quiz') === 'true')
   const [showCountInfo, setShowCountInfo] = useState(false)
@@ -148,6 +149,8 @@ export default function Blackjack() {
   const [quizPhase, setQuizPhase] = useState(null)   // null | 'asking' | 'feedback'
   const [quizInput, setQuizInput] = useState('')
   const [quizCorrect, setQuizCorrect] = useState(null)
+  const [winAmount, setWinAmount] = useState(null)   // net gain/loss for last hand
+  const [showHowToPlay, setShowHowToPlay] = useState(() => localStorage.getItem('bj-visited') !== 'true')
   const [quizStreak, setQuizStreak] = useState(0)
 
   function changeShoe(n) {
@@ -166,6 +169,7 @@ export default function Blackjack() {
     setQuizPhase(null)
     setQuizInput('')
     setQuizCorrect(null)
+    setWinAmount(null)
   }
 
   function toggleCounting() {
@@ -336,6 +340,11 @@ export default function Blackjack() {
     setPhase('result')
     setOutcome(r)
     setMessage(msg)
+    // Calculate net gain/loss for display (total returned minus original bet)
+    if (r === 'blackjack') setWinAmount({ net: Math.floor(currentBet * 1.5), label: `Blackjack! +$${Math.floor(currentBet * 1.5)} profit` })
+    else if (r === 'win')  setWinAmount({ net: currentBet,  label: `+$${currentBet * 2} returned (+$${currentBet} profit)` })
+    else if (r === 'push') setWinAmount({ net: 0,           label: `$${currentBet} returned` })
+    else                   setWinAmount({ net: -currentBet, label: `-$${currentBet}` })
     setBalance(b => {
       let n = b
       if (r === 'blackjack') n += Math.floor(currentBet * 2.5)
@@ -365,6 +374,7 @@ export default function Blackjack() {
     setOutcome(null)
     setMessage('')
     setQuizPhase(null)
+    setWinAmount(null)
   }
 
   function resetGame() {
@@ -464,6 +474,55 @@ export default function Blackjack() {
             )}
           </div>
           <button className="bj-count-info-btn" onClick={() => setShowCountInfo(true)} title="How does card counting work?">?</button>
+        </div>
+      )}
+
+      {/* ── How to play modal (first visit) ── */}
+      {showHowToPlay && (
+        <div className="bj-modal-overlay" onClick={() => { setShowHowToPlay(false); localStorage.setItem('bj-visited', 'true') }}>
+          <div className="bj-modal" onClick={e => e.stopPropagation()}>
+            <button className="bj-modal-close" onClick={() => { setShowHowToPlay(false); localStorage.setItem('bj-visited', 'true') }}>✕</button>
+            <h2 className="bj-modal-title">How to Play Blackjack</h2>
+            <p className="bj-modal-intro">
+              Beat the dealer by getting a hand closer to <strong>21</strong> without going over. You start with <strong>${STARTING_CHIPS}</strong> in chips.
+            </p>
+
+            <h3 className="bj-modal-section">The Goal</h3>
+            <p className="bj-modal-text">
+              Cards 2–10 are worth face value. Jacks, Queens, and Kings are worth 10. Aces count as 11 or 1 — whichever helps you more.
+            </p>
+
+            <h3 className="bj-modal-section">Your Moves</h3>
+            <div className="bj-modal-table">
+              <div className="bj-modal-row header"><span>Action</span><span></span><span>What it does</span></div>
+              <div className="bj-modal-row plus"><span>Hit</span><span></span><span>Draw another card</span></div>
+              <div className="bj-modal-row zero"><span>Stand</span><span></span><span>Keep your hand, end your turn</span></div>
+              <div className="bj-modal-row minus"><span>Double Down</span><span></span><span>Double your bet, draw exactly one more card</span></div>
+            </div>
+
+            <h3 className="bj-modal-section">Winning & Payouts</h3>
+            <div className="bj-modal-table">
+              <div className="bj-modal-row header"><span>Result</span><span></span><span>Payout</span></div>
+              <div className="bj-modal-row plus"><span>Win</span><span></span><span>1:1 — win equal to your bet</span></div>
+              <div className="bj-modal-row plus"><span>Blackjack</span><span></span><span>3:2 — win 1.5× your bet (Ace + 10-value card)</span></div>
+              <div className="bj-modal-row zero"><span>Push</span><span></span><span>Tie — bet returned, no gain or loss</span></div>
+              <div className="bj-modal-row minus"><span>Bust / Lose</span><span></span><span>Lose your bet</span></div>
+            </div>
+
+            <h3 className="bj-modal-section">The Dealer</h3>
+            <p className="bj-modal-text">
+              The dealer's second card is hidden until your turn ends. The dealer must hit on 16 or less and stand on 17 or more. If the dealer busts, you win.
+            </p>
+
+            <h3 className="bj-modal-section">Card Counting Practice</h3>
+            <p className="bj-modal-text">
+              Want to practice the Hi-Lo card counting system? Enable <strong>🃏 Count</strong> in the top right. It tracks the running count, true count, and edge for you — and includes a quiz mode to test yourself after each hand.
+            </p>
+
+            <button className="bj-btn primary" style={{ marginTop: '20px', width: '100%' }} onClick={() => { setShowHowToPlay(false); localStorage.setItem('bj-visited', 'true') }}>
+              Let's Play
+            </button>
+          </div>
         </div>
       )}
 
@@ -635,7 +694,12 @@ export default function Blackjack() {
 
           {phase === 'result' && (
             <div className="bj-result">
-              <div className="bj-current-bet">Bet was: ${bet}</div>
+              <div className="bj-current-bet">Bet: ${bet}</div>
+              {winAmount !== null && (
+                <div className={`bj-win-amount ${winAmount.net > 0 ? 'win' : winAmount.net < 0 ? 'lose' : 'push'}`}>
+                  {winAmount.label}
+                </div>
+              )}
 
               {/* Quiz prompt */}
               {quizPhase === 'asking' && (

@@ -635,6 +635,16 @@
   text-transform: uppercase;
 }
 
+/* Win/loss amount */
+.bj-win-amount {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+.bj-win-amount.win  { color: #68d391; }
+.bj-win-amount.lose { color: #fc8181; }
+.bj-win-amount.push { color: #a0aec0; font-size: 1rem; }
+
 /* Out of chips */
 .bj-broke {
   display: flex;
