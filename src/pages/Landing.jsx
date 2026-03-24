@@ -101,7 +101,7 @@ export default function Landing() {
 
       <footer className="site-footer">
         <p>
-          Made with ☕ by Jeff &nbsp;·&nbsp; <a href="https://gamesbyjeff.com">gamesbyjeff.com</a>
+          Built by <a href="https://jeffreyaslaven.com" target="_blank" rel="noopener noreferrer">Jeffrey Slaven</a>
           &nbsp;·&nbsp; Non-commercial hobby project
         </p>
         <p className="footer-small">
