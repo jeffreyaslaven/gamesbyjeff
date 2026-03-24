@@ -565,7 +565,7 @@ export default function Blackjack() {
         {/* ── Controls ── */}
         <div className="bj-controls">
 
-          {phase === 'betting' && balance === 0 && (
+          {phase === 'betting' && balance === 0 && bet === 0 && (
             <div className="bj-broke">
               <p>Out of chips!</p>
               <button className="bj-btn primary" onClick={resetGame}>
@@ -574,7 +574,7 @@ export default function Blackjack() {
             </div>
           )}
 
-          {phase === 'betting' && balance > 0 && (
+          {phase === 'betting' && (balance > 0 || bet > 0) && (
             <div className="bj-betting">
               {counting && <div className="bj-shoe-selector">
                 <span className="bj-shoe-label">Shoe:</span>
