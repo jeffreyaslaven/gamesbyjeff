@@ -22,6 +22,14 @@ const classics = [
     emoji: '🐱',
     path: '/dino-run',
   },
+  {
+    id: 'blackjack',
+    title: 'Blackjack',
+    description: 'Standard casino rules. Hit, stand, or double down. Start with $500 in chips — don\'t blow it.',
+    original: 'Classic Casino Card Game',
+    emoji: '🃏',
+    path: '/blackjack',
+  },
 ]
 
 export default function Landing() {

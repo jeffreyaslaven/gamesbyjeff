@@ -1,0 +1,646 @@
+/* ── Layout ───────────────────────────────────────────────────────────────── */
+
+.bj-wrap {
+  min-height: 100vh;
+  background: #1a1a2e;
+  display: flex;
+  flex-direction: column;
+}
+
+.bj-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bj-back {
+  color: #a0aec0;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+.bj-back:hover { color: #fff; }
+
+.bj-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f6d860;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.bj-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bj-count-toggle {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid #4a5568;
+  background: #2d3748;
+  color: #a0aec0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: all 0.15s;
+}
+.bj-count-toggle:hover { border-color: #718096; color: #e2e8f0; }
+.bj-count-toggle.active {
+  background: rgba(104, 211, 145, 0.15);
+  border-color: #68d391;
+  color: #68d391;
+}
+
+.bj-balance {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #68d391;
+}
+
+/* ── Count panel ──────────────────────────────────────────────────────────── */
+
+.bj-count-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 10px 20px;
+  flex-wrap: wrap;
+}
+
+.bj-count-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 0 20px;
+}
+
+.bj-count-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #718096;
+}
+
+.bj-count-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.bj-count-value.neutral { color: #a0aec0; }
+
+.bj-count-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ── Count info button ────────────────────────────────────────────────────── */
+
+/* Count mode sub-toggles */
+.bj-count-toggles {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.bj-mini-toggle {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #4a5568;
+  background: #2d3748;
+  color: #718096;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.bj-mini-toggle:hover { border-color: #718096; color: #e2e8f0; }
+.bj-mini-toggle.active {
+  background: rgba(104, 211, 145, 0.12);
+  border-color: #68d391;
+  color: #68d391;
+}
+.bj-mini-toggle.active.quiz {
+  background: rgba(159, 122, 234, 0.12);
+  border-color: #9f7aea;
+  color: #b794f4;
+}
+
+.bj-streak {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #f6ad55;
+}
+
+/* Quiz */
+.bj-quiz {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.bj-quiz-prompt {
+  color: #b794f4;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.bj-quiz-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.bj-quiz-input {
+  width: 140px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #4a5568;
+  background: #2d3748;
+  color: #e2e8f0;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  outline: none;
+}
+.bj-quiz-input:focus { border-color: #9f7aea; }
+
+.bj-quiz-feedback {
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+}
+.bj-quiz-feedback.correct {
+  background: rgba(72, 187, 120, 0.15);
+  color: #68d391;
+  border: 1px solid rgba(72, 187, 120, 0.3);
+}
+.bj-quiz-feedback.wrong {
+  background: rgba(245, 101, 101, 0.15);
+  color: #fc8181;
+  border: 1px solid rgba(245, 101, 101, 0.3);
+}
+
+.bj-count-info-btn {
+  margin-left: 12px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid #4a5568;
+  background: #2d3748;
+  color: #718096;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.bj-count-info-btn:hover { border-color: #a0aec0; color: #e2e8f0; }
+
+/* ── Modal ────────────────────────────────────────────────────────────────── */
+
+.bj-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+
+.bj-modal {
+  background: #1e2a3a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 28px 28px 24px;
+  max-width: 540px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.bj-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #718096;
+  font-size: 1rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+}
+.bj-modal-close:hover { color: #e2e8f0; }
+
+.bj-modal-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #f6d860;
+  margin: 0 0 12px;
+}
+
+.bj-modal-intro {
+  color: #cbd5e0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+.bj-modal-section {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a0aec0;
+  font-weight: 600;
+  margin: 20px 0 8px;
+}
+
+.bj-modal-text {
+  color: #cbd5e0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin: 0 0 10px;
+}
+
+.bj-modal-table {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 4px;
+}
+
+.bj-modal-row {
+  display: grid;
+  grid-template-columns: 1.6fr 0.5fr 2fr;
+  gap: 8px;
+  padding: 9px 14px;
+  font-size: 0.82rem;
+  align-items: center;
+}
+.bj-modal-row.header {
+  background: rgba(255,255,255,0.05);
+  color: #718096;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+.bj-modal-row.plus  { background: rgba(72,187,120,0.08);  color: #9ae6b4; }
+.bj-modal-row.zero  { background: rgba(237,212,83,0.06);  color: #faf089; }
+.bj-modal-row.minus { background: rgba(245,101,101,0.08); color: #feb2b2; }
+.bj-modal-row span:nth-child(2) { font-weight: 800; font-size: 1rem; text-align: center; }
+
+.bj-modal-rule {
+  background: rgba(104, 211, 145, 0.1);
+  border: 1px solid rgba(104, 211, 145, 0.25);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #9ae6b4;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.bj-modal-list {
+  color: #cbd5e0;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  padding-left: 20px;
+  margin: 0;
+}
+.bj-modal-list li { margin-bottom: 4px; }
+
+/* ── Hi-Lo badge on cards ─────────────────────────────────────────────────── */
+
+.bj-hilo-badge {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 4px;
+  line-height: 1.4;
+}
+
+.bj-hilo-badge.plus  { background: #c6f6d5; color: #276749; }
+.bj-hilo-badge.minus { background: #fed7d7; color: #9b2c2c; }
+.bj-hilo-badge.zero  { background: #e2e8f0; color: #4a5568; }
+
+/* ── Table ────────────────────────────────────────────────────────────────── */
+
+.bj-table {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 16px 32px;
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+  gap: 12px;
+}
+
+/* ── Hand areas ───────────────────────────────────────────────────────────── */
+
+.bj-dealer-area,
+.bj-player-area {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.bj-area-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #a0aec0;
+  font-weight: 600;
+}
+
+.bj-hand {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  min-height: 110px;
+  align-items: center;
+}
+
+/* ── Cards ────────────────────────────────────────────────────────────────── */
+
+.bj-card {
+  width: 72px;
+  height: 100px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  position: relative;
+  box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.bj-card.red { color: #e53e3e; }
+.bj-card.black { color: #1a1a2e; }
+
+@keyframes deal-in {
+  from { transform: translateY(-20px) scale(0.85); opacity: 0; }
+  to   { transform: translateY(0)     scale(1);    opacity: 1; }
+}
+
+.bj-card.deal-in {
+  animation: deal-in 0.22s ease-out;
+}
+
+.bj-card.face-down {
+  background: linear-gradient(135deg, #1a4a8a 25%, #163d73 25%, #163d73 50%, #1a4a8a 50%, #1a4a8a 75%, #163d73 75%);
+  background-size: 10px 10px;
+  border: 1px solid #2a5a9a;
+}
+
+.bj-card-back {
+  font-size: 2.2rem;
+  color: transparent;
+}
+
+.bj-card-corner {
+  position: absolute;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+}
+.bj-card-corner.top-left    { top: 5px; left: 6px; }
+.bj-card-corner.bottom-right {
+  bottom: 5px;
+  right: 6px;
+  transform: rotate(180deg);
+}
+
+.bj-card-center-suit {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+/* ── Message ──────────────────────────────────────────────────────────────── */
+
+.bj-message-wrap {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bj-message {
+  padding: 8px 24px;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.bj-message.win,
+.bj-message.blackjack {
+  background: rgba(72, 187, 120, 0.2);
+  color: #68d391;
+  border: 1px solid rgba(72, 187, 120, 0.4);
+}
+
+.bj-message.lose,
+.bj-message.bust {
+  background: rgba(245, 101, 101, 0.2);
+  color: #fc8181;
+  border: 1px solid rgba(245, 101, 101, 0.4);
+}
+
+.bj-message.push {
+  background: rgba(237, 212, 83, 0.15);
+  color: #f6d860;
+  border: 1px solid rgba(237, 212, 83, 0.3);
+}
+
+/* ── Controls ─────────────────────────────────────────────────────────────── */
+
+.bj-controls {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Betting */
+.bj-betting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+/* Shoe selector */
+.bj-shoe-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bj-shoe-label {
+  color: #718096;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-right: 2px;
+}
+
+.bj-shoe-btn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #4a5568;
+  background: #2d3748;
+  color: #a0aec0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.bj-shoe-btn:hover { border-color: #718096; color: #e2e8f0; }
+.bj-shoe-btn.active {
+  background: rgba(246, 216, 96, 0.15);
+  border-color: #f6d860;
+  color: #f6d860;
+}
+
+.bj-bet-label {
+  color: #a0aec0;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.bj-bet-amount {
+  color: #f6d860;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.bj-chips {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.bj-chip {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 3px dashed rgba(255, 255, 255, 0.4);
+  background: var(--chip-color);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.2s;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.bj-chip:hover:not(:disabled) { transform: translateY(-3px); }
+.bj-chip:active:not(:disabled) { transform: translateY(0); }
+.bj-chip:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.bj-bet-btns {
+  display: flex;
+  gap: 10px;
+}
+
+/* Action buttons */
+.bj-actions,
+.bj-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.bj-current-bet {
+  color: #a0aec0;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+.bj-action-btns {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Buttons */
+.bj-btn {
+  padding: 10px 28px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: transform 0.1s, filter 0.1s;
+}
+.bj-btn:hover  { filter: brightness(1.15); }
+.bj-btn:active { transform: scale(0.97); }
+
+.bj-btn.primary { background: #f6d860; color: #1a1a2e; }
+.bj-btn.secondary { background: #2d3748; color: #a0aec0; border: 1px solid #4a5568; }
+.bj-btn.hit    { background: #48bb78; color: #fff; }
+.bj-btn.stand  { background: #fc8181; color: #fff; }
+.bj-btn.double { background: #9f7aea; color: #fff; }
+
+/* Dealing / dealer turn label */
+.bj-dealing-label {
+  color: #a0aec0;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Out of chips */
+.bj-broke {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #fc8181;
+  font-weight: 600;
+}

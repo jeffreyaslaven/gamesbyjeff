@@ -25,7 +25,10 @@ export default function PipeDodger() {
   const lastPipeRef = useRef(0)
   const [screen, setScreen] = useState('idle') // idle | playing | dead
   const [score, setScore] = useState(0)
-  const [best, setBest] = useState(() => Number(localStorage.getItem('pd-best') || 0))
+  const [best, setBest] = useState(() => {
+    const n = parseInt(localStorage.getItem('pd-best'), 10)
+    return Number.isFinite(n) && n >= 0 ? n : 0
+  })
 
   const initState = () => ({
     bird: { y: H / 2, vy: 0 },

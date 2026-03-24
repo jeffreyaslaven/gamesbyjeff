@@ -104,7 +104,10 @@ export default function PumpkinRun() {
   const lastObstacleRef = useRef(0)
   const [screen, setScreen] = useState('idle')
   const [score, setScore] = useState(0)
-  const [best, setBest] = useState(() => Number(localStorage.getItem('pumpkin-best') || 0))
+  const [best, setBest] = useState(() => {
+    const n = parseInt(localStorage.getItem('pumpkin-best'), 10)
+    return Number.isFinite(n) && n >= 0 ? n : 0
+  })
 
   const initState = () => ({
     dino: { y: GROUND_Y, vy: 0, ducking: false, legPhase: 0 },
@@ -266,6 +269,27 @@ export default function PumpkinRun() {
     return () => cancelAnimationFrame(rafRef.current)
   }, [screen, best])
 
+  const touchStartY = useRef(null)
+
+  const onTouchStart = useCallback((e) => {
+    e.preventDefault()
+    touchStartY.current = e.touches[0].clientY
+    jump()
+  }, [jump])
+
+  const onTouchMove = useCallback((e) => {
+    e.preventDefault()
+    if (touchStartY.current === null) return
+    const dy = e.touches[0].clientY - touchStartY.current
+    if (dy > 20) duck(true)
+  }, [duck])
+
+  const onTouchEnd = useCallback((e) => {
+    e.preventDefault()
+    touchStartY.current = null
+    duck(false)
+  }, [duck])
+
   return (
     <div className="pumpkin-wrapper">
       <nav className="pumpkin-nav">
@@ -279,8 +303,13 @@ export default function PumpkinRun() {
         height={H}
         className="pumpkin-canvas"
         onClick={jump}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       />
-      <p className="pumpkin-hint">SPACE / ↑ to jump &nbsp;·&nbsp; ↓ to duck &nbsp;·&nbsp; tap to play</p>
+      <p className="pumpkin-hint">
+        SPACE / ↑ jump &nbsp;·&nbsp; ↓ duck &nbsp;·&nbsp; tap to play &nbsp;·&nbsp; swipe ↓ to duck
+      </p>
     </div>
   )
 }
@@ -600,23 +629,28 @@ function drawCat(ctx, x, groundY, ducking, legPhase, jumping) {
 
   // Ears
   ctx.fillStyle = '#d4865a'
+  // Back ear — subtle tip clip (just the very top corner taken off)
   ctx.beginPath()
   ctx.moveTo(x + 20, top + 6)
-  ctx.lineTo(x + 24, top - 8)
+  ctx.lineTo(x + 23, top - 5)
+  ctx.lineTo(x + 27, top - 7)
   ctx.lineTo(x + 32, top + 4)
   ctx.fill()
+  // Front ear — normal pointed tip
   ctx.beginPath()
   ctx.moveTo(x + 30, top + 4)
   ctx.lineTo(x + 36, top - 8)
   ctx.lineTo(x + 44, top + 6)
   ctx.fill()
-  // Inner ear highlight
+  // Inner ear highlight — back ear
   ctx.fillStyle = 'rgba(255,200,180,0.5)'
   ctx.beginPath()
-  ctx.moveTo(x + 22, top + 5)
-  ctx.lineTo(x + 25, top - 4)
+  ctx.lineTo(x + 25, top - 3)
+  ctx.lineTo(x + 28, top - 4)
+  ctx.lineTo(x + 30, top + 3)
   ctx.lineTo(x + 30, top + 3)
   ctx.fill()
+  // Inner ear highlight — front ear
   ctx.beginPath()
   ctx.moveTo(x + 32, top + 3)
   ctx.lineTo(x + 36, top - 4)
